@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Treasure Game Project — Key Takeaways</title>
+  <style>
+    /* ===== LIGHT THEME (default) ===== */
+    :root, [data-theme="light"] {
+      --gold: #d97706;
+      --gold-light: #fef3c7;
+      --gold-dark: #78350f;
+      --bg: #fffbeb;
+      --card: #ffffff;
+      --card-border: #e5e7eb;
+      --border: #fbbf24;
+      --text: #1c1917;
+      --text-muted: #78716c;
+      --accent-green: #059669;
+      --accent-blue: #2563eb;
+      --accent-purple: #7c3aed;
+      --accent-red: #dc2626;
+      --code-bg: #f3f4f6;
+      --code-color: #7c3aed;
+      --hero-from: #78350f;
+      --hero-mid: #d97706;
+      --hero-to: #f59e0b;
+      --shadow-sm: rgba(0,0,0,0.06);
+      --shadow-md: rgba(0,0,0,0.1);
+      --takeaway-from: #fef3c7;
+      --takeaway-to: #fffbeb;
+      --footer-border: #e5e7eb;
+      --tag-react-bg: #dbeafe; --tag-react-color: #1d4ed8;
+      --tag-node-bg: #d1fae5; --tag-node-color: #065f46;
+      --tag-db-bg: #ede9fe; --tag-db-color: #5b21b6;
+      --tag-ui-bg: #fef3c7; --tag-ui-color: #92400e;
+      --arch-client-bg: #dbeafe; --arch-client-border: #60a5fa; --arch-client-color: #1e40af;
+      --arch-server-bg: #d1fae5; --arch-server-border: #34d399; --arch-server-color: #065f46;
+      --arch-db-bg: #ede9fe; --arch-db-border: #a78bfa; --arch-db-color: #5b21b6;
+      --chevron-color: #a8a29e;
+    }
+
+    /* ===== DARK THEME ===== */
+    [data-theme="dark"] {
+      --gold: #f59e0b;
+      --gold-light: #451a03;
+      --gold-dark: #fcd34d;
+      --bg: #0f0f0f;
+      --card: #1a1a1a;
+      --card-border: #2a2a2a;
+      --border: #b45309;
+      --text: #f5f5f4;
+      --text-muted: #a8a29e;
+      --accent-green: #34d399;
+      --accent-blue: #60a5fa;
+      --accent-purple: #a78bfa;
+      --accent-red: #f87171;
+      --code-bg: #262626;
+      --code-color: #a78bfa;
+      --hero-from: #1c1917;
+      --hero-mid: #78350f;
+      --hero-to: #92400e;
+      --shadow-sm: rgba(0,0,0,0.3);
+      --shadow-md: rgba(0,0,0,0.4);
+      --takeaway-from: #1c1917;
+      --takeaway-to: #171717;
+      --footer-border: #2a2a2a;
+      --tag-react-bg: #1e3a5f; --tag-react-color: #93c5fd;
+      --tag-node-bg: #064e3b; --tag-node-color: #6ee7b7;
+      --tag-db-bg: #2e1065; --tag-db-color: #c4b5fd;
+      --tag-ui-bg: #451a03; --tag-ui-color: #fcd34d;
+      --arch-client-bg: #1e3a5f; --arch-client-border: #3b82f6; --arch-client-color: #93c5fd;
+      --arch-server-bg: #064e3b; --arch-server-border: #10b981; --arch-server-color: #6ee7b7;
+      --arch-db-bg: #2e1065; --arch-db-border: #8b5cf6; --arch-db-color: #c4b5fd;
+      --chevron-color: #78716c;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* ===== THEME TOGGLE ===== */
+    .theme-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1.25rem;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 999px;
+      padding: 0.4rem 0.85rem;
+      box-shadow: 0 2px 10px var(--shadow-sm);
+      cursor: pointer;
+      transition: background 0.3s, border-color 0.3s;
+      user-select: none;
+    }
+    .theme-toggle:hover { box-shadow: 0 4px 16px var(--shadow-md); }
+
+    .theme-toggle .label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: color 0.3s;
+    }
+
+    .toggle-track {
+      width: 44px;
+      height: 24px;
+      background: #d1d5db;
+      border-radius: 999px;
+      position: relative;
+      transition: background 0.3s;
+    }
+    [data-theme="dark"] .toggle-track { background: #f59e0b; }
+
+    .toggle-thumb {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+    }
+    [data-theme="dark"] .toggle-thumb { transform: translateX(20px); }
+
+    .hero {
+      background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-mid) 50%, var(--hero-to) 100%);
+      color: white;
+      text-align: center;
+      padding: 3rem 1.5rem;
+      transition: background 0.3s;
+    }
+    .hero h1 { font-size: 2.2rem; margin-bottom: 0.5rem; }
+    .hero p { font-size: 1.1rem; opacity: 0.9; max-width: 600px; margin: 0 auto; }
+
+    .container { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    /* ===== COLLAPSIBLE SECTIONS ===== */
+    .section-title {
+      font-size: 1.5rem;
+      color: var(--gold-dark);
+      margin: 2.5rem 0 0;
+      padding: 0.5rem 0;
+      border-bottom: 3px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: color 0.3s, border-color 0.3s;
+      cursor: pointer;
+      user-select: none;
+    }
+    .section-title:hover { opacity: 0.85; }
+
+    .chevron {
+      margin-left: auto;
+      font-size: 1.2rem;
+      color: var(--chevron-color);
+      transition: transform 0.3s, color 0.3s;
+      flex-shrink: 0;
+    }
+    .section-title.collapsed .chevron {
+      transform: rotate(-90deg);
+    }
+
+    .section-body {
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease;
+      max-height: 2000px;
+      opacity: 1;
+      margin-top: 1rem;
+    }
+    .section-body.collapsed {
+      max-height: 0;
+      opacity: 0;
+      margin-top: 0;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px var(--shadow-sm);
+      transition: transform 0.2s, box-shadow 0.2s, background 0.3s, border-color 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px var(--shadow-md);
+    }
+
+    .card .icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+    }
+    .card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: var(--gold-dark);
+      transition: color 0.3s;
+    }
+    .card p, .card ul {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      transition: color 0.3s;
+    }
+    .card ul { padding-left: 1.2rem; }
+    .card li { margin-bottom: 0.25rem; }
+
+    .tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      padding: 0.15rem 0.6rem;
+      border-radius: 999px;
+      font-weight: 600;
+      margin-right: 0.35rem;
+      margin-bottom: 0.35rem;
+      transition: background 0.3s, color 0.3s;
+    }
+    .tag-react { background: var(--tag-react-bg); color: var(--tag-react-color); }
+    .tag-node { background: var(--tag-node-bg); color: var(--tag-node-color); }
+    .tag-db { background: var(--tag-db-bg); color: var(--tag-db-color); }
+    .tag-ui { background: var(--tag-ui-bg); color: var(--tag-ui-color); }
+
+    .arch-diagram {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 2px 8px var(--shadow-sm);
+      margin-bottom: 1.25rem;
+      transition: background 0.3s, border-color 0.3s;
+    }
+
+    .arch-row {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .arch-box {
+      border-width: 2px;
+      border-style: solid;
+      border-radius: 10px;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      min-width: 130px;
+      transition: background 0.3s, border-color 0.3s, color 0.3s;
+    }
+    .arch-box.client { background: var(--arch-client-bg); border-color: var(--arch-client-border); color: var(--arch-client-color); }
+    .arch-box.server { background: var(--arch-server-bg); border-color: var(--arch-server-border); color: var(--arch-server-color); }
+    .arch-box.database { background: var(--arch-db-bg); border-color: var(--arch-db-border); color: var(--arch-db-color); }
+    .arch-arrow {
+      font-size: 1.5rem;
+      color: var(--text-muted);
+      margin: 0.5rem 0;
+      transition: color 0.3s;
+    }
+
+    .workflow-list {
+      list-style: none;
+      padding: 0;
+      counter-reset: step;
+    }
+    .workflow-list li {
+      counter-increment: step;
+      padding: 1rem 1rem 1rem 3.5rem;
+      margin-bottom: 0.75rem;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      position: relative;
+      font-size: 0.95rem;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .workflow-list li::before {
+      content: counter(step);
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--gold);
+      color: white;
+      width: 1.8rem;
+      height: 1.8rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      transition: background 0.3s;
+    }
+    .workflow-list li strong { color: var(--gold-dark); transition: color 0.3s; }
+
+    .code-ref {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.82rem;
+      background: var(--code-bg);
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      color: var(--code-color);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    code {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.85rem;
+      background: var(--code-bg);
+      padding: 0.1rem 0.35rem;
+      border-radius: 3px;
+      color: var(--code-color);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .takeaway-box {
+      background: linear-gradient(135deg, var(--takeaway-from), var(--takeaway-to));
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .takeaway-box h3 { color: var(--gold-dark); margin-bottom: 0.75rem; font-size: 1.2rem; transition: color 0.3s; }
+    .takeaway-box ul { padding-left: 1.2rem; }
+    .takeaway-box li { margin-bottom: 0.5rem; font-size: 0.95rem; }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--footer-border);
+      margin-top: 3rem;
+      transition: color 0.3s, border-color 0.3s;
+    }
+
+    /* ===== EXPAND / COLLAPSE ALL ===== */
+    .expand-controls {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .expand-btn {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 0.35rem 0.85rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, border-color 0.3s;
+    }
+    .expand-btn:hover {
+      color: var(--gold-dark);
+      border-color: var(--border);
+    }
+
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 1.6rem; }
+      .section-title { font-size: 1.25rem; }
+      .card { padding: 1.25rem; }
+      .theme-toggle { top: 0.5rem; right: 0.5rem; padding: 0.3rem 0.6rem; }
+      .theme-toggle .label { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== THEME TOGGLE ===== -->
+<div class="theme-toggle" onclick="toggleTheme()" role="button" aria-label="Toggle dark/light mode">
+  <span class="label">Theme</span>
+  <div class="toggle-track">
+    <div class="toggle-thumb">
+      <span class="toggle-icon">🌙</span>
+    </div>
+  </div>
+</div>
+
+<div class="hero">
+  <h1>🏴‍☠️ Treasure Hunt Game — Key Takeaways</h1>
+  <p>A full-stack React + Express project built with Claude Code, covering game logic, auth, database, animations, and deployment.</p>
+</div>
+
+<div class="container">
+
+  <!-- Expand / Collapse All -->
+  <div class="expand-controls">
+    <button class="expand-btn" onclick="toggleAll(true)">Expand All</button>
+    <button class="expand-btn" onclick="toggleAll(false)">Collapse All</button>
+  </div>
+
+  <!-- ===== PROJECT OVERVIEW ===== -->
+  <h2 class="section-title" onclick="toggleSection(this)">
+    📋 Project Overview
+    <span class="chevron">▼</span>
+  </h2>
+  <div class="section-body">
+    <div class="card-grid">
+      <div class="card">
+        <div class="icon">🎮</div>
+        <h3>Game Concept</h3>
+        <p>Pick 2 of 3 treasure chests. One chest hides treasure (+$100), the others contain skeletons (-$50). Game ends when treasure is found or 2 chests are opened. Final score determines Win / Tie / Loss.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🔐</div>
+        <h3>Auth &amp; Persistence</h3>
+        <p>Authenticated users get scores saved to SQLite via JWT. Guest mode lets anyone play without sign-up — no server interaction needed.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🧩</div>
+        <h3>Tech Stack</h3>
+        <div style="margin-top:0.5rem;">
+          <span class="tag tag-react">React 18</span>
+          <span class="tag tag-react">Vite + SWC</span>
+          <span class="tag tag-ui">Tailwind CSS</span>
+          <span class="tag tag-ui">Framer Motion</span>
+          <span class="tag tag-ui">shadcn/ui</span>
+          <span class="tag tag-node">Express 5</span>
+          <span class="tag tag-db">better-sqlite3</span>
+          <span class="tag tag-node">bcryptjs</span>
+          <span class="tag tag-node">JWT</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ARCHITECTURE ===== -->
+  <h2 class="section-title" onclick="toggleSection(this)">
+    🏗️ Architecture
+    <span class="chevron">▼</span>
+  </h2>
+  <div class="section-body">
+    <div class="arch-diagram">
+      <div class="arch-row">
+        <div class="arch-box client">React SPA<br><small>Vite dev :3000</small></div>
+      </div>
+      <div class="arch-arrow">⇅ /api proxy</div>
+      <div class="arch-row">
+        <div class="arch-box server">Express API<br><small>:3001</small></div>
+      </div>
+      <div class="arch-arrow">⇅</div>
+      <div class="arch-row">
+        <div class="arch-box database">SQLite<br><small>treasure.db</small></div>
+      </div>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <h3>Client — <span class="code-ref">src/</span></h3>
+        <ul>
+          <li><span class="code-ref">App.tsx</span> — all game state, box logic, score, sound effects, UI</li>
+          <li><span class="code-ref">AuthPage.tsx</span> — sign-in / sign-up forms</li>
+          <li><span class="code-ref">ScoreHistory.tsx</span> — past scores table (last 20)</li>
+          <li><span class="code-ref">GameEndAnimation.tsx</span> — particle effects on game end</li>
+          <li><span class="code-ref">components/ui/</span> — shadcn/ui (Radix UI) library</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Server — <span class="code-ref">server/index.js</span></h3>
+        <ul>
+          <li><code>POST /api/signup</code> — create user (bcrypt hash)</li>
+          <li><code>POST /api/signin</code> — login, return JWT (24h)</li>
+          <li><code>POST /api/scores</code> — save game score (auth)</li>
+          <li><code>GET /api/scores</code> — fetch user's last 20 scores</li>
+          <li>Production: serves built frontend from <span class="code-ref">build/</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== KEY FEATURES ===== -->
+  <h2 class="section-title" onclick="toggleSection(this)">
+    ✨ Key Features Implemented
+    <span class="chevron">▼</span>
+  </h2>
+  <div class="section-body">
+    <div class="card-grid">
+      <div class="card">
+        <div class="icon">🎲</div>
+        <h3>Random Treasure Placement</h3>
+        <p>One of 3 chests is randomly assigned treasure each game via <span class="code-ref">Math.floor(Math.random() * 3)</span>.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🔊</div>
+        <h3>Sound Effects</h3>
+        <p><span class="code-ref">chest_open.mp3</span> plays for treasure. <span class="code-ref">chest_open_with_evil_laugh.mp3</span> plays for skeletons. Triggered on box click.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🎭</div>
+        <h3>Animations</h3>
+        <p>Framer Motion powers chest flip (rotateY), hover scale, score pop-in, result badge entrance, and particle effects on game end.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🔑</div>
+        <h3>Custom Cursor</h3>
+        <p><span class="code-ref">key.png</span> used as a CSS custom cursor when hovering over closed chests — a fun UX detail.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🏆</div>
+        <h3>Win / Tie / Loss Display</h3>
+        <p>Final score determines outcome: &gt;0 = Win (green), 0 = Tie (amber), &lt;0 = Loss (red). Animated badge with color-coded styling.</p>
+      </div>
+      <div class="card">
+        <div class="icon">📊</div>
+        <h3>Score History</h3>
+        <p>Authenticated users see their last 20 game results fetched from SQLite. Auto-refreshes after each game.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CLAUDE CODE WORKFLOW ===== -->
+  <h2 class="section-title" onclick="toggleSection(this)">
+    🤖 Claude Code Workflow Learned
+    <span class="chevron">▼</span>
+  </h2>
+  <div class="section-body">
+    <ol class="workflow-list">
+      <li><strong>/init</strong> — Generate <span class="code-ref">CLAUDE.md</span> so Claude understands the project structure, commands, and architecture.</li>
+      <li><strong>@ File References</strong> — Use <code>@src/audios/chest_open.mp3</code> to point Claude to specific assets. Keeps prompts precise and context-aware.</li>
+      <li><strong># Project Memory</strong> — Save rules (e.g., "always add function comments") with <code>#</code> so Claude follows them in future turns.</li>
+      <li><strong>Screenshot-driven dev</strong> — Paste a screenshot, circle an area, describe the change. Claude implements visually.</li>
+      <li><strong>/context &amp; /compact</strong> — Monitor token usage (<code>/context</code>), compress history (<code>/compact</code>), or reset (<code>/clear</code>) to manage context window.</li>
+      <li><strong>Plan Mode (Shift+Tab)</strong> — Think before coding. Explore options like database choices (SQLite vs. others) before committing to implementation.</li>
+      <li><strong>Ultrathink</strong> — Prefix with "Ultrathink" for deeper reasoning on complex features (e.g., full sign-up/sign-in + score persistence).</li>
+      <li><strong>Custom Commands</strong> — Create <span class="code-ref">.claude/commands/deploy_vercel.md</span> or <span class="code-ref">deploy_github_page.md</span> for reusable deployment workflows.</li>
+      <li><strong>Ctrl+T — To-Do List</strong> — Track Claude's task progress in real-time during multi-step implementations.</li>
+      <li><strong>Esc+Esc — Conversation Picker</strong> — Jump between conversations to manage different feature branches or tasks.</li>
+    </ol>
+  </div>
+
+  <!-- ===== CLAUDE CODE TIPS ===== -->
+  <h2 class="section-title" onclick="toggleSection(this)">
+    💡 Claude Code Tips &amp; Tricks
+    <span class="chevron">▼</span>
+  </h2>
+  <div class="section-body">
+    <div class="card-grid">
+      <div class="card">
+        <div class="icon">📌</div>
+        <h3>Be Specific, Then Stop</h3>
+        <p>"Use @file in @component to do X. <strong>Do not do anything else.</strong>" — constraining scope prevents Claude from over-engineering.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🔄</div>
+        <h3>Verify After Each Step</h3>
+        <p>"Check the comments of existing changes" — always review Claude's work before moving on. Catch drift early.</p>
+      </div>
+      <div class="card">
+        <div class="icon">💾</div>
+        <h3>Commit Before Experimenting</h3>
+        <p>Make a git commit before Plan Mode or Ultrathink. Easy rollback with <code>git revert</code> if things go sideways.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🧠</div>
+        <h3>Context is King</h3>
+        <p>Monitor with <code>/context</code>. 27% used? Fine. Getting high? <code>/compact</code> to compress. Starting fresh? <code>/clear</code>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== FINAL TAKEAWAYS ===== -->
+  <h2 class="section-title" onclick="toggleSection(this)">
+    🎯 Top Takeaways
+    <span class="chevron">▼</span>
+  </h2>
+  <div class="section-body">
+    <div class="takeaway-box">
+      <ul>
+        <li><strong>Full-stack in one session</strong> — React game + Express API + SQLite auth, built iteratively with Claude Code.</li>
+        <li><strong>Prompt precision matters</strong> — File references (<code>@</code>), scope constraints ("do not do anything else"), and screenshot-driven prompts produce better results.</li>
+        <li><strong>Context management is a skill</strong> — <code>/init</code>, <code>/compact</code>, <code>/clear</code>, and <code>/context</code> keep Claude effective across long sessions.</li>
+        <li><strong>Plan before you build</strong> — Shift+Tab Plan Mode + Ultrathink for complex features saves rework.</li>
+        <li><strong>Custom commands = automation</strong> — Deployment scripts in <code>.claude/commands/</code> make repetitive workflows one-shot.</li>
+        <li><strong>Commit often, review always</strong> — Git checkpoints + manual review of Claude's changes prevent cascading mistakes.</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Treasure Hunt Game — Claude Code Mini-Course Takeaways &nbsp;|&nbsp; Built with Claude Code &nbsp;|&nbsp; 2026
+</footer>
+
+<script>
+  // Theme toggle
+  function toggleTheme() {
+    var html = document.documentElement;
+    var current = html.getAttribute('data-theme');
+    var next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    document.querySelector('.toggle-icon').textContent = next === 'dark' ? '☀️' : '🌙';
+  }
+
+  // Section collapse/expand
+  function toggleSection(titleEl) {
+    var body = titleEl.nextElementSibling;
+    var isCollapsed = titleEl.classList.contains('collapsed');
+    if (isCollapsed) {
+      titleEl.classList.remove('collapsed');
+      body.classList.remove('collapsed');
+    } else {
+      titleEl.classList.add('collapsed');
+      body.classList.add('collapsed');
+    }
+  }
+
+  // Expand / Collapse all
+  function toggleAll(expand) {
+    var titles = document.querySelectorAll('.section-title');
+    titles.forEach(function(title) {
+      var body = title.nextElementSibling;
+      if (expand) {
+        title.classList.remove('collapsed');
+        body.classList.remove('collapsed');
+      } else {
+        title.classList.add('collapsed');
+        body.classList.add('collapsed');
+      }
+    });
+  }
+
+  // Init theme on load
+  (function() {
+    var saved = localStorage.getItem('theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var theme = saved || (prefersDark ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelector('.toggle-icon').textContent = theme === 'dark' ? '☀️' : '🌙';
+    });
+  })();
+</script>
+
+</body>
+</html>
